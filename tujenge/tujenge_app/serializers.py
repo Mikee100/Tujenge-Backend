@@ -1,12 +1,13 @@
 # chama_app/serializers.py
 from rest_framework import serializers
-from .models import User
+from .models import User , Chama
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.serializers import AuthenticationFailed
 from datetime import timedelta
 from django.utils import timezone
 from .models import Chama
 from .models import Contribution
+from .models import Loan
 
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,6 +22,7 @@ class SignupSerializer(serializers.ModelSerializer):
             chama = Chama.objects.get(name="chama1")
         except Chama.DoesNotExist:
             raise serializers.ValidationError("Default chama 'chama1' does not exist.")
+        chama, created = Chama.objects.get_or_create(name="chama1")
         user = User.objects.create_user(**validated_data)
         user.chama = chama
         user.save()
