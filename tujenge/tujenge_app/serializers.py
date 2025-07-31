@@ -1,12 +1,13 @@
 # chama_app/serializers.py
 from rest_framework import serializers
-from .models import User
+from .models import User , Chama
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.serializers import AuthenticationFailed
 from datetime import timedelta
 from django.utils import timezone
 from .models import Chama
 from .models import Contribution
+from .models import Loan
 
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,6 +22,7 @@ class SignupSerializer(serializers.ModelSerializer):
             chama = Chama.objects.get(name="chama1")
         except Chama.DoesNotExist:
             raise serializers.ValidationError("Default chama 'chama1' does not exist.")
+        chama, created = Chama.objects.get_or_create(name="chama1")
         user = User.objects.create_user(**validated_data)
         user.chama = chama
         user.save()
@@ -99,3 +101,32 @@ class ContributionSerializer(serializers.ModelSerializer):
         model = Contribution
         fields = ['id', 'amount', 'month', 'chama', 'user', 'user_email', 'date']
         read_only_fields = ['user', 'date']
+
+class LoanSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+
+    class Meta:
+        model = Loan
+        fields = ['id', 'user_email', 'amount', 'purpose', 'duration', 'status', 'date_requested']
+        read_only_fields = ['id', 'status', 'date_requested']
+
+
+class VaultSummarySerializer(serializers.Serializer):
+    total_balance = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_contributions = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_members = serializers.IntegerField()
+
+class VaultGrowthSerializer(serializers.Serializer):
+    month = serializers.CharField()
+    balance = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+class VaultPieSerializer(serializers.Serializer):
+    contributions = serializers.DecimalField(max_digits=12, decimal_places=2)
+    loans = serializers.DecimalField(max_digits=12, decimal_places=2)
+    repayments = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+class VaultActivitySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    user = serializers.EmailField()
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+    date = serializers.DateField()

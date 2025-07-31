@@ -69,3 +69,23 @@ class Contribution(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.amount} ({self.month})"
+
+class Loan(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('repaid', 'Repaid'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chama = models.ForeignKey(Chama, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    purpose = models.TextField()
+    duration = models.PositiveIntegerField(help_text="Loan duration in months")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    date_requested = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.amount} Ksh - {self.status}"
+
