@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Chama, Contribution
+from .models import User, Chama, Contribution, Loan
 
 
 # Register your models here.
@@ -24,4 +24,5 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(Chama)
 admin.site.register(Contribution) 
+admin.site.register(Loan)
 

@@ -69,3 +69,24 @@ class Contribution(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.amount} ({self.month})"
+
+
+class Loan(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('paid', 'Paid'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
+    chama = models.ForeignKey(Chama, on_delete=models.CASCADE, related_name='loans')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    purpose = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    requested_date = models.DateTimeField(auto_now_add=True)
+    approved_date = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_loans')
+
+    def __str__(self):
+        return f"{self.user.email} - {self.amount} ({self.status})"

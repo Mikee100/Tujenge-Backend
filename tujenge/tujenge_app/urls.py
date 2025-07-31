@@ -12,7 +12,10 @@ from .views import UserProfileView
 from .views import MyContributionsView
 from .views import AllMembersView
 from .views import AllContributionsView
-
+from .views import MonthlyProgressView
+from .views import LoanListCreateView
+from .views import AllLoansView
+from .views import LoanUpdateView
 
 urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
@@ -40,3 +43,12 @@ urlpatterns += [
 ]
 
 
+urlpatterns += [
+    path('chama/<int:chama_id>/progress/', MonthlyProgressView.as_view(), name='monthly-progress'),
+]
+
+urlpatterns += [
+    path('loans/', LoanListCreateView.as_view(), name='loans-list-create'),
+    path('loans/all/', AllLoansView.as_view(), name='all-loans'),
+    path('loans/<int:pk>/update/', LoanUpdateView.as_view(), name='loan-update'),
+]

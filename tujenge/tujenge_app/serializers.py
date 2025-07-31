@@ -99,3 +99,15 @@ class ContributionSerializer(serializers.ModelSerializer):
         model = Contribution
         fields = ['id', 'amount', 'month', 'chama', 'user', 'user_email', 'date']
         read_only_fields = ['user', 'date']
+
+
+from .models import Loan
+
+class LoanSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    approved_by_email = serializers.EmailField(source='approved_by.email', read_only=True)
+    
+    class Meta:
+        model = Loan
+        fields = ['id', 'amount', 'purpose', 'status', 'requested_date', 'approved_date', 'user_email', 'approved_by_email', 'chama']
+        read_only_fields = ['user', 'status', 'requested_date', 'approved_date', 'approved_by']
